@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.example.entities.Category;
+import com.example.exception.CategoryException;
 import com.example.service.CategoryServiceImpl;
 
 @RestController
@@ -30,7 +31,7 @@ public class CategoryController {
 	
 	
 	@PostMapping("/addCategory")
-	public ResponseEntity<Category> addCategory(@Valid @RequestBody Category category)
+	public ResponseEntity<Category> addCategory(@Valid @RequestBody Category category) throws CategoryException
 	{ 
 		Category category1=service.addCategory(category);
 		return new ResponseEntity<Category>(category1,HttpStatus.OK);

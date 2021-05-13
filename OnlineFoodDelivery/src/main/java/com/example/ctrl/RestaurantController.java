@@ -21,6 +21,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.example.entities.Restaurant;
+import com.example.exception.RestaurantException;
 import com.example.service.IRestaurantService;
 
 
@@ -35,7 +36,7 @@ public class RestaurantController {
 	
 	
 	@PostMapping("/addRestaurant")
-	public ResponseEntity<Restaurant> addRestaurant(@Valid @RequestBody Restaurant restaurant){
+	public ResponseEntity<Restaurant> addRestaurant(@Valid @RequestBody Restaurant restaurant) throws RestaurantException{
 		
 		Restaurant restaurant2 = service.addRestaurant(restaurant);
 		return new ResponseEntity<Restaurant>(restaurant2, HttpStatus.OK);

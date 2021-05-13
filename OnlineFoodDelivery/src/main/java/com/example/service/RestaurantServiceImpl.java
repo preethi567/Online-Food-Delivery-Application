@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.example.entities.Restaurant;
+import com.example.exception.RestaurantException;
 import com.example.repository.IRestaurantRepository;
 
 
@@ -16,7 +17,7 @@ import com.example.repository.IRestaurantRepository;
 public  class RestaurantServiceImpl implements IRestaurantService {
 
 	@Autowired
-	IRestaurantRepository repository;
+	private IRestaurantRepository restaurantRepository;
 	
 	/*@Autowired
 	IItemRepository repo2;*/
@@ -24,22 +25,27 @@ public  class RestaurantServiceImpl implements IRestaurantService {
 	
 	
 	@Override
-	public Restaurant addRestaurant(Restaurant res) {
-		
-		repository.saveAndFlush(res);
+	public Restaurant addRestaurant(Restaurant res) throws RestaurantException {
+		if (res != null) {
+			if (restaurantRepository.existsById(res.getRestaurantId())) {
+				throw new RestaurantException("Restaurant with this id already exists");
+			}
+			restaurantRepository.save(res);
+		}
+
 		return res;
 	}
 
 	@Override
 	public Restaurant updateRestaurant(Restaurant restaurant) {
 		
-		repository.saveAndFlush(restaurant);
+		restaurantRepository.saveAndFlush(restaurant);
 		return restaurant;
 	}
 	@Override
 	public String removeRestaurantById(int Rid) {
 		
-		Restaurant rest=repository.findByRestaurantId(Rid);
+		Restaurant rest=restaurantRepository.findByRestaurantId(Rid);
 //		List<Item> list=repo2.findItemsByRestaurant(rest.getRestaurantName());
 //		for(int i=0;i<list.size();i++)
 //		{
@@ -47,7 +53,7 @@ public  class RestaurantServiceImpl implements IRestaurantService {
 //			int id=item.getItemId();
 //			repo2.deleteById(id);
 //		}
-		repository.deleteById(Rid);
+		restaurantRepository.deleteById(Rid);
 		
 		String msg="Remove restaurant successfull !!!";
 		return msg;
@@ -59,14 +65,14 @@ public  class RestaurantServiceImpl implements IRestaurantService {
 	@Override
 	public List<Restaurant> viewAllRestaurants() {
 		
-		List<Restaurant> list=repository.findAll();
+		List<Restaurant> list=restaurantRepository.findAll();
 		return list;
 	}
 	
 	@Override
 	public Restaurant viewRestaurantById(int id) {
 		
-		Restaurant restaurant = repository.findById(id).orElse(null);
+		Restaurant restaurant = restaurantRepository.findById(id).orElse(null);
 		return restaurant;	
 	}
 
@@ -74,7 +80,7 @@ public  class RestaurantServiceImpl implements IRestaurantService {
 	@Override
 	public List<Restaurant> viewNearByRestaurant(String location) {
 		
-		List<Restaurant> list = repository.viewNearByRestaurant(location);
+		List<Restaurant> list = restaurantRepository.viewNearByRestaurant(location);
 		return list;
 	}
 
@@ -83,7 +89,7 @@ public  class RestaurantServiceImpl implements IRestaurantService {
 	public List<Restaurant> viewRestaurantByItemName(String restaurantName) {
 		
 		//List<Restaurant> list=repository.viewRestaurantByItemName(restaurantName);
-		List<Restaurant> list=repository.findByRestaurantName(restaurantName);
+		List<Restaurant> list=restaurantRepository.findByRestaurantName(restaurantName);
 		return list;
 	}
 }

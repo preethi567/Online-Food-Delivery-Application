@@ -109,6 +109,11 @@ public class Restaurant implements Serializable {
 				+ address + ", managerName=" + managerName + ", contactNumber=" + contactNumber + "]";
 	}
 
+	public List<Item> getItemList() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 	/*@Override
 	public String toString() {
 		return "Restaurant [restaurantId=" + restaurantId + ", restaurantName=" + restaurantName + ", address="

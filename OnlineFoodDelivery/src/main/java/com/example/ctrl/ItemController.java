@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.example.entities.Item;
+import com.example.exception.ItemException;
 import com.example.service.IItemService;
 
 
@@ -31,12 +32,8 @@ public class ItemController {
 	private IItemService itemService;
 
 		@PostMapping("/addItem")
-		public ResponseEntity<Item> AddItem(@RequestBody Item item){
-			Item items= itemService.addItem(item);
-			if(items==null){
-				return new ResponseEntity("Sorry! Items not available!", HttpStatus.NOT_FOUND);
-			}
-			return new ResponseEntity<Item>(items, HttpStatus.OK);
+		public Item AddItem(@RequestBody Item item) throws ItemException{
+			return itemService.addItem(item);
 		}
 		@GetMapping("/{itemId}")
 		public ResponseEntity<Item> findItem(@PathVariable("itemId")int itemId){
@@ -44,6 +41,7 @@ public class ItemController {
 			if(items==null) {
 				return new ResponseEntity("Sorry! Items not found!", HttpStatus.NOT_FOUND);
 			}
+			
 			return new ResponseEntity<Item>(items, HttpStatus.OK);
 		}
 		@PutMapping("/updateItem")
@@ -61,22 +59,39 @@ public class ItemController {
 			
 			return new ResponseEntity<>("Item deleted", HttpStatus.OK);
 		}
-		@GetMapping("itemName/{itemName}")
-		public ResponseEntity<List<Item>> findItemByName(@PathVariable("itemName")String itemName){
-			List<Item> items= itemService.viewAllItemsByName(itemName);
-			if(items==null) {
-				return new ResponseEntity("Sorry! Items not found!", HttpStatus.NOT_FOUND);
-			}
-			return new ResponseEntity<List<Item>>(items, HttpStatus.OK);
-		}
-		@GetMapping("/categoryName/{category.catId}")
-		public ResponseEntity<List<Item>> findItemByCategory(@PathVariable("category.catId")int catId){
-			List<Item> items= itemService.viewAllItems(catId);
-			if(items==null) {
-				return new ResponseEntity("Sorry! Items not found!", HttpStatus.NOT_FOUND);
-			}
-			return new ResponseEntity<List<Item>>(items, HttpStatus.OK);
-		}
-	
+		@GetMapping("/viewAllItemsByCategory/{categoryName}")
+		public ResponseEntity<List<Item>> viewAllItemsByCategory(@PathVariable("categoryName") String name)
+			 {
 
-}
+			
+			List<Item> item2 = itemService.viewAllItemsByCategory(name);
+			if (item2.isEmpty()) {
+				return new ResponseEntity("Sorry! Items not found!", HttpStatus.NOT_FOUND);
+			}
+			return new ResponseEntity<List<Item>>(item2, HttpStatus.OK);
+		}
+
+		@GetMapping("/viewAllItemsByItemName/{itemName}")
+		public ResponseEntity<List<Item>> viewAllItemsByItemName(@PathVariable("itemName") String name)
+  {
+			
+			
+			List<Item> items = itemService.viewAllItemsByName(name);
+			if (items.isEmpty()) {
+				return new ResponseEntity("Sorry! Items not found!", HttpStatus.NOT_FOUND);
+			}
+			return new ResponseEntity<List<Item>>(items, HttpStatus.OK);
+		}
+
+		@GetMapping("/findItemsByRestaurant/{restaurantName}")
+		public ResponseEntity<List<Item>> findItemsByRestaurant(@PathVariable("restaurantName") String name)
+				 {
+			
+			List<Item> items = itemService.findItemsByRestaurant(name);
+			if (items.isEmpty()) {
+				return new ResponseEntity("Sorry! Items not found!", HttpStatus.NOT_FOUND);
+			}
+			return new ResponseEntity<List<Item>>(items, HttpStatus.OK);
+		}
+
+	}

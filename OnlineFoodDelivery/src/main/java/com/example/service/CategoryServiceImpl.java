@@ -9,6 +9,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.example.entities.Category;
+import com.example.exception.CategoryException;
+import com.example.exception.ItemException;
 import com.example.repository.ICategoryRepository;
 
 @Service
@@ -16,27 +18,32 @@ import com.example.repository.ICategoryRepository;
 public class CategoryServiceImpl implements ICategoryService {
 	
 	@Autowired
-    ICategoryRepository repository;
+    private ICategoryRepository categoryRepository;
 	
 	
 	@Override
-	public Category addCategory(Category cat) {
-		
-		repository.save(cat);
+	public Category addCategory(Category cat) throws CategoryException {
+		if (cat != null) {
+			if (categoryRepository.existsById(cat.getCatId())) {
+				throw new CategoryException("Category with this id already exists");
+			}
+		categoryRepository.save(cat);
+		}
 		return cat;
 	}
+
 
 	@Override
 	public Category updateCategory(Category cat) {
 		
-		repository.save(cat);
+		categoryRepository.save(cat);
 		return cat;
 	}
 
 	@Override
 	public String removeCategory(Category cat) {
 		
-		repository.delete(cat);
+		categoryRepository.deleteById(cat.getCatId());
 		String msg="Category removed successfully...";
 		return msg;
 	}
@@ -44,14 +51,14 @@ public class CategoryServiceImpl implements ICategoryService {
 	@Override
 	public Category viewCategoryById(int id) {
 		
-		Category c=repository.findById(id).orElse(null);
+		Category c=categoryRepository.findByCatId(id);
 		return c;
 	}
 
 	@Override
 	public List<Category> viewAllCategory() {
 		
-		List<Category> cat=repository.findAll();
+		List<Category> cat=categoryRepository.findAll();
 		return cat;
 	}
 
